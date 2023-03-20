@@ -93,7 +93,7 @@ class individual:
         for i in range(0, len(self.genome)):
             string += self.genome[i]
         
-        string += " fitness: " + str(self.fitness)
+        # string += " fitness: " + str(self.fitness)
 
         return string
 
@@ -206,24 +206,24 @@ def create_highRate_pop(pop):
     # print(pop)
     for i in range(0, 20):
         pop.single_mutate_generational(80)
-        print(pop.avg_fitness)
-    print(pop)
+    #     print(pop.avg_fitness)
+    # print(pop)
 
 def create_lowRate_pop(pop):
     # print(pop.avg_fitness)
     # print(pop)
     for i in range(0, 20):
         pop.single_mutate_generational(2)
-        print(pop.avg_fitness)
-    print(pop)
+    #     print(pop.avg_fitness)
+    # print(pop)
 
 def create_multRate_pop(pop):
     # print(pop.avg_fitness)
     # print(pop)
     for i in range(0, 20):
         pop.mult_mutate_generational(highRate=85, lowRate=5)
-        print(pop.avg_fitness)
-    print(pop)
+    #     print(pop.avg_fitness)
+    # print(pop)
 
 
 
@@ -240,10 +240,26 @@ create_highRate_pop(p1)
 print("mult rate")
 create_multRate_pop(p2)
 
-# p = population()
-# print(p.avg_fitness)
-# print(p)
-# for i in range(0,20):
-#     p.generational()
-#     print(p.avg_fitness)
-# print(p)
+data = {'Genome_Sequence': [], 'Avg_Fitness': [], 'Population': []}
+
+for i in range(0,50):
+    popChoice = random.randint(0,2)
+    if popChoice == 0:
+        data['Genome_Sequence'].append(p.the_pop[i])
+        data['Avg_Fitness'].append(p.avg_fitness)
+        data['Population'].append('pop1')
+    elif popChoice == 1:
+        data['Genome_Sequence'].append(p1.the_pop[i])
+        data['Avg_Fitness'].append(p1.avg_fitness)
+        data['Population'].append('pop2')
+    else:
+        data['Genome_Sequence'].append(p2.the_pop[i])
+        data['Avg_Fitness'].append(p2.avg_fitness)
+        data['Population'].append('pop3')
+
+import pandas as pd
+
+df1 = pd.DataFrame(data={'Genome_Sequence': data['Genome_Sequence'], 'Avg_Fitness': data['Avg_Fitness'], 'Population': data['Population']})
+
+df1.to_csv("answer_key.csv")
+df1.to_csv("datafile.csv", columns=['Genome_Sequence'])
