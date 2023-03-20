@@ -64,7 +64,7 @@ class individual:
 
     def copy(self,source):
         self.fitness = source.fitness
-        for i in range(0,genomesize):
+        for i in range(0, genomesize):
             self.genome[i] = source.genome[i]
 
     def __str__(self):
@@ -77,7 +77,9 @@ class individual:
 
         return string
 
+# set the population size
 popsize = 50
+# size of participants in the tournament for selection (low selection pressure at 3)
 tourn_size = 3
 
 class population:
@@ -120,7 +122,7 @@ class population:
         self.calcstats()
 
     def crossover(self,p1,p2): # uniform crossover
-        for j in range(0,genomesize):
+        for i in range(0,genomesize):
             if random.randint(0,100) < 10: # uniform crossover
                 # swap chars in parents at same locations
                 self.the_pop[p1].genome[i], self.the_pop[p2].genome[i] = self.the_pop[p2].genome[i], self.the_pop[p1].genome[i]
@@ -152,14 +154,28 @@ class population:
 
         return string
 
+'''
+create data for the population and individual
+'''
 
+
+def create_pop(pop):
+    # print(pop.avg_fitness)
+    # print(pop)
+    for i in range(0, 20):
+        pop.generational()
+        print(pop.avg_fitness)
+    print(pop)
 
 
 
 p = population()
-print(p.avg_fitness)
-print(p)
-for i in range(0,20):
-    p.generational()
-    print(p.avg_fitness)
-print(p)
+create_pop(p)
+
+# p = population()
+# print(p.avg_fitness)
+# print(p)
+# for i in range(0,20):
+#     p.generational()
+#     print(p.avg_fitness)
+# print(p)
