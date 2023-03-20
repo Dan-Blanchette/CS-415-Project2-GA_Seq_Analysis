@@ -226,36 +226,27 @@ def create_multRate_pop(pop):
     # print(pop)
 
 
-
-p = population()
-p1 = population()
-p2 = population()
+pops = []
+pops.append(population())
+pops.append(population())
+pops.append(population())
 
 print("low rate")
-create_lowRate_pop(p)
+create_lowRate_pop(pops[0])
 
 print("high rate")
-create_highRate_pop(p1)
+create_highRate_pop(pops[1])
 
 print("mult rate")
-create_multRate_pop(p2)
+create_multRate_pop(pops[2])
 
 data = {'Genome_Sequence': [], 'Avg_Fitness': [], 'Population': []}
 
 for i in range(0,50):
     popChoice = random.randint(0,2)
-    if popChoice == 0:
-        data['Genome_Sequence'].append(p.the_pop[i])
-        data['Avg_Fitness'].append(p.avg_fitness)
-        data['Population'].append('pop1')
-    elif popChoice == 1:
-        data['Genome_Sequence'].append(p1.the_pop[i])
-        data['Avg_Fitness'].append(p1.avg_fitness)
-        data['Population'].append('pop2')
-    else:
-        data['Genome_Sequence'].append(p2.the_pop[i])
-        data['Avg_Fitness'].append(p2.avg_fitness)
-        data['Population'].append('pop3')
+    data['Genome_Sequence'].append(pops[popChoice].the_pop[i])
+    data['Avg_Fitness'].append(pops[popChoice].avg_fitness)
+    data['Population'].append(f'pop{popChoice}')
 
 import pandas as pd
 
