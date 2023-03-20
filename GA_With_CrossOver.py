@@ -61,6 +61,26 @@ class individual:
                 self.genome[i] = random.choice(DNAcharacters)
         
         self.calcFitness()
+    
+    def mult_mutate(self, highRate=80, lowRate=2):
+        """
+        Basic mutation function that will walk through the genome and have a chance to mutate each character based on the parameter given.
+
+        :param mRate: integer between 0 and 100; chance a character can be mutated; defaults to 2
+        """
+        current_rate = lowRate
+
+        for i in range(0, len(self.genome)):
+            if random.uniform(0,100) < 25:
+                if current_rate == lowRate:
+                    current_rate = highRate
+                else:
+                    current_rate = lowRate
+
+            if random.uniform(0,100) < current_rate:
+                self.genome[i] = random.choice(DNAcharacters)
+        
+        self.calcFitness()
 
     def copy(self,source):
         self.fitness = source.fitness
@@ -99,7 +119,7 @@ class population:
             self.avg_fitness += i.fitness
         self.avg_fitness /= popsize
 
-    def generational(self):
+    def single_mutate_generational(self, mutate_rate = 2):
         """
         models sexual reproduction in a generational model
         """
@@ -113,8 +133,30 @@ class population:
 
             tempPop.crossover(i,i+1)
 
-            tempPop.the_pop[i+1].mutate()
-            tempPop.the_pop[i].mutate()
+            tempPop.the_pop[i+1].mutate(mutate_rate)
+            tempPop.the_pop[i].mutate(mutate_rate)
+            
+        #when new/temp population is full, copy new/temp pop back into the_pop
+        for i in range(0,popsize):
+            self.the_pop[i].copy(tempPop.the_pop[i])
+        self.calcstats()
+    
+    def mult_mutate_generational(self, highRate=80, lowRate=2):
+        """
+        models sexual reproduction in a generational model
+        """
+        tempPop = population()
+        for i in range(0,popsize,2): #  needs an even pop size
+            parent = self.tournament() # select, returns an index
+            parent2 = self.tournament() # select, returns an index
+
+            tempPop.the_pop[i].copy(self.the_pop[parent])
+            tempPop.the_pop[i+1].copy(self.the_pop[parent2])
+
+            tempPop.crossover(i,i+1)
+
+            tempPop.the_pop[i+1].mult_mutate(highRate, lowRate)
+            tempPop.the_pop[i].mult_mutate(highRate, lowRate)
             
         #when new/temp population is full, copy new/temp pop back into the_pop
         for i in range(0,popsize):
@@ -159,18 +201,44 @@ create data for the population and individual
 '''
 
 
-def create_pop(pop):
+def create_highRate_pop(pop):
     # print(pop.avg_fitness)
     # print(pop)
     for i in range(0, 20):
-        pop.generational()
+        pop.single_mutate_generational(80)
+        print(pop.avg_fitness)
+    print(pop)
+
+def create_lowRate_pop(pop):
+    # print(pop.avg_fitness)
+    # print(pop)
+    for i in range(0, 20):
+        pop.single_mutate_generational(2)
+        print(pop.avg_fitness)
+    print(pop)
+
+def create_multRate_pop(pop):
+    # print(pop.avg_fitness)
+    # print(pop)
+    for i in range(0, 20):
+        pop.mult_mutate_generational(highRate=85, lowRate=5)
         print(pop.avg_fitness)
     print(pop)
 
 
 
 p = population()
-create_pop(p)
+p1 = population()
+p2 = population()
+
+print("low rate")
+create_lowRate_pop(p)
+
+print("high rate")
+create_highRate_pop(p1)
+
+print("mult rate")
+create_multRate_pop(p2)
 
 # p = population()
 # print(p.avg_fitness)
