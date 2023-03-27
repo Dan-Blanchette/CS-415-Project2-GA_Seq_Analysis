@@ -1,5 +1,7 @@
 import pandas as pd
 from glob_align import align_seq
+import os
+
 def load_data():
     """Load data from datafile.csv into a pandas dataframe. without adding a index"""
     df = pd.read_csv('datafile.csv', usecols=[1])
@@ -8,6 +10,11 @@ def load_data():
 
 def decipher(df):
     """Decipher the data."""
+    
+    #delete file if it exists
+    if os.path.exists('aligned.csv'):
+        os.remove('aligned.csv')
+
     for i in range(len(df)):
         for j in range(i+1, len(df)):
             align_seq(df.iloc[i, 0], df.iloc[j, 0])
