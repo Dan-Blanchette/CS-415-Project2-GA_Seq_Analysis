@@ -196,6 +196,10 @@ class population:
 
         return string
 
+    def copy(self, source):
+        self.avg_fitness = source.avg_fitness
+        for i in range(0, len(self.the_pop)):
+            self.the_pop[i].copy(source.the_pop[i])
 '''
 create data for the population and individual
 '''
@@ -207,7 +211,7 @@ def create_highRate_pop(pop):
     for i in range(0, 20):
         pop.single_mutate_generational(80)
     #     print(pop.avg_fitness)
-    # print(pop)
+    print(pop)
 
 def create_lowRate_pop(pop):
     # print(pop.avg_fitness)
@@ -215,7 +219,7 @@ def create_lowRate_pop(pop):
     for i in range(0, 20):
         pop.single_mutate_generational(2)
     #     print(pop.avg_fitness)
-    # print(pop)
+    print(pop)
 
 def create_multRate_pop(pop):
     # print(pop.avg_fitness)
@@ -223,13 +227,15 @@ def create_multRate_pop(pop):
     for i in range(0, 20):
         pop.mult_mutate_generational(highRate=85, lowRate=5)
     #     print(pop.avg_fitness)
-    # print(pop)
+    print(pop)
 
 
 pops = []
 pops.append(population())
 pops.append(population())
 pops.append(population())
+pops[1].copy(pops[0])
+pops[2].copy(pops[0])
 
 print("low rate")
 create_lowRate_pop(pops[0])
