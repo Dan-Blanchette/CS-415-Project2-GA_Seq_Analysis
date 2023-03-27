@@ -1,9 +1,10 @@
 import pandas as pd
 
 def load_data():
-    """Load the data from the file into a list of strings."""
-    df = pd.read_csv('datafile.csv')
+    """Load data from datafile.csv into a pandas dataframe. without adding a index"""
+    df = pd.read_csv('datafile.csv', usecols=[1])
     print(df)
+    
 
 def decipher(df):
     """Decipher the data."""
