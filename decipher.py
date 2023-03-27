@@ -12,5 +12,5 @@ def main():
     """Main function for deciphering a sequence of DNA."""
     load_data()
 
-if __name__ == 'main':
+if (__name__ == '__main__'):
     main()
