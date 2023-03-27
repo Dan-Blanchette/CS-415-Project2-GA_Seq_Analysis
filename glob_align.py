@@ -43,16 +43,17 @@ def align_seq(seq1, seq2):
 
             diag += blosum.blosum50[blosum.aminoDictionary[seq2[r-1]]][blosum.aminoDictionary[seq1[c-1]]]
             
-            scoring_matrix[r][c] = max(vert,horz,diag)
-            #direction_matrix[r][c] = "v or h or d"
-            if diag >= horz and diag >= vert:
-                direction_matrix[r][c] = "\u2196"
-            if horz > diag and horz > vert:
-                direction_matrix[r][c] = "\u2190"
-            if vert > diag and vert > horz:
-                direction_matrix[r][c] = "\u2191"
+            final_value = max(diag, vert, horz)
+            scoring_matrix[r][c] = final_value
 
-    # printmatrix(scoringmatrix)
+            if final_value == diag:
+                direction_matrix[r][c] = '\u2196' # look up unicode for symbols
+            elif final_value == horz:
+                direction_matrix[r][c] = '\u2190'
+            else:
+                direction_matrix[r][c] = '\u2191'
+
+    # printmatrix(scoring_matrix)
     # print(seq1)
     # print(seq2)
 
@@ -81,7 +82,7 @@ def align_seq(seq1, seq2):
             # pos1 -= 1
             pos2 -=1
         else:
-            print("something is wrong")
+            print(f"something is wrong {pos1} {pos2}")
 
 
     aligned1 = aligned1[::-1]
