@@ -10,9 +10,10 @@ def decipher(df):
     """Decipher the data."""
     for i in range(len(df)):
         # print(df.iloc[i, 0])
-        seq1 = df.iloc[i, 0]
-        seq2 = df.iloc[i, 1]
-        align_seq(seq1, seq2)
+        for j in range(i+1, len(df)):
+            # print(df.iloc[j, 0])
+            align_seq(df.iloc[i, 0], df.iloc[j, 0])
+            
 
 
 def main():
