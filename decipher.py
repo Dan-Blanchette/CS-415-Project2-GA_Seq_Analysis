@@ -9,9 +9,7 @@ def load_data():
 def decipher(df):
     """Decipher the data."""
     for i in range(len(df)):
-        # print(df.iloc[i, 0])
         for j in range(i+1, len(df)):
-            # print(df.iloc[j, 0])
             align_seq(df.iloc[i, 0], df.iloc[j, 0])
             
 
