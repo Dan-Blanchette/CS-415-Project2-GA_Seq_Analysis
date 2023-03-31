@@ -8,10 +8,12 @@ def make_graph(table): # table is 50x50 aligned scores
     fig = px.scatter(
         x=np.arange(50),
         y=table,
-        title="individuals and alignment scores"
+        title="Individuals and Alignment Scores"
     )
-
-    fig.show()
+    fig.update_layout(showlegend=False)
+        
+    # fig.show()
+    fig.write_image("indiv_align_scores.png")
 
 def calculate_accuracy(group1, group2, group3):
     
@@ -45,7 +47,6 @@ def calculate_accuracy(group1, group2, group3):
 def create_table():
     f = pd.read_csv("datafile.csv",usecols=[1])
 
-
     table = [[0 for i in range(0,len(f))] for j in range(0,len(f))]
 
 
@@ -57,9 +58,6 @@ def create_table():
     return table
 
 def analyze_scores(table):
-
-    # make_graph(table)
-
     # following code works with 76% accuracy ie identifies low mutation rate really well
 
     group1 = []
@@ -109,6 +107,7 @@ def main():
     table = create_table()
     group1, group2, group3 = analyze_scores(table)
     calculate_accuracy(group1, group2, group3)
+    make_graph(table)
 
 if __name__ == "__main__":
     main()
