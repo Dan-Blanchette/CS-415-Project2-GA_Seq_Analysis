@@ -3,17 +3,33 @@ import glob_align as ga
 
 import plotly.express as px
 import numpy as np
+import copy
 
 def make_graph(table): # table is 50x50 aligned scores
+    copy_table = copy.deepcopy(table)
     fig = px.scatter(
         x=np.arange(50),
-        y=table,
+        y=copy_table,
         title="Individuals and Alignment Scores"
     )
     fig.update_layout(showlegend=False)
         
-    fig.show()
+    # fig.show()
     fig.write_image("indiv_align_scores.png")
+
+def make_group_graph(table, group, population='population_1'):
+    npt = np.array(table)
+    npg = np.array(group)
+
+    fig = px.scatter(
+        npt[npg],
+        
+        title=population + " Alignment Scores")
+
+    fig.update_layout(showlegend=False)
+        
+    fig.show()
+    fig.write_image(population + "_align_scores.png")
 
 def calculate_accuracy(group1, group2, group3):
     
@@ -43,6 +59,7 @@ def calculate_accuracy(group1, group2, group3):
     print(f'right {right} wrong {wrong} total: {right+wrong}')
     print(f'accuracy: {right/(right+wrong)}')
 
+    return right/(right+wrong)
 
 def create_table():
     f = pd.read_csv("datafile.csv",usecols=[1])
@@ -64,8 +81,7 @@ def analyze_scores(table):
     group2 = []
     group3 = []
 
-    # percentage = .82
-    # top 35%
+    # top 40%
     for i in range(0,50): # row
         for j in range(0,50): # column
             if i != j and table[i][j] != 0:
@@ -74,23 +90,21 @@ def analyze_scores(table):
                         group1.append(i)
                     if j not in group1:
                         group1.append(j)
-
     group1.sort()
+    
+    # bottom 35%
     print(group1, len(group1))
     for i in range(0,50): # row
         if i not in group1:
             val = np.mean(table[i])
             if val < table[i][i]*.35 and i not in group2:
                 group2.append(i)
-
     group2.sort()
-    print(group2, len(group2))
-
+    
+    # everything else goes in group 3
     for i in range(0, 50):
         if i not in group1 and i not in group2:
             group3.append(i)
-
-    print(group3, len(group3))
 
     return group1, group2, group3
 
@@ -100,6 +114,10 @@ def main():
     group1, group2, group3 = analyze_scores(table)
     calculate_accuracy(group1, group2, group3)
     make_graph(table)
+    make_group_graph(table, group1, "population_0")
+    make_group_graph(table, group2, "population_1")
+    make_group_graph(table, group3, "population_2")
+    make_group_graph(table, group2+group3, "populations_1_2")
 
 if __name__ == "__main__":
     main()
