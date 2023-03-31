@@ -1,6 +1,18 @@
 import pandas as pd
 import glob_align as ga
 
+import plotly.express as px
+import numpy as np
+
+def make_graph(table): # table is 50x50 aligned scores
+    fig = px.scatter(
+        x=np.arange(50),
+        y=table,
+        title="individuals and alignment scores"
+    )
+
+    fig.show()
+
 
 f = pd.read_csv("datafile.csv",usecols=[1])
 
@@ -14,17 +26,8 @@ for i in range(0, len(f['Genome_Sequence'])):
             val = ga.align_seq(f['Genome_Sequence'][i], f['Genome_Sequence'][j])
             table[i][j] = val
 
+make_graph(table)
 
-# import plotly.express as px
-# import numpy as np
-
-# fig = px.scatter(
-#       x=np.arange(50),
-#       y=table,
-#       title="individuals and align scores"
-# )
-
-# fig.show()
 
 # following code works with 76% accuracy ie identifies low mutation rate really well
 import numpy as np
