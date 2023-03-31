@@ -14,16 +14,6 @@ for i in range(0, len(f['Genome_Sequence'])):
             val = ga.align_seq(f['Genome_Sequence'][i], f['Genome_Sequence'][j])
             table[i][j] = val
 
-# for i in range(0,50):
-#     for j in range(0,50):
-#         print(table[i][j], ' ', end='')
-#     print()
-
-# with open('my_table.csv', 'a') as f:
-#     for i in range(0, 50):
-#         for j in range(0, 50):
-#             f.write(f'{table[i][j]},')
-#         f.write('\n')
 
 # import plotly.express as px
 # import numpy as np
@@ -66,19 +56,6 @@ for i in range(0,50): # row
         val = np.mean(table[i])
         if val < table[i][i]*.35 and i not in group2:
             group2.append(i)
-
-    # for j in range(0,50): # column
-    #     # print(f'checking indiv {i} and {j}')
-    #     if i != j and table[i][j] != 0:
-    #         # print(f'{table[i][i]} - {table[i][j]} ({table[i][i] - table[i][j]}) > {table[i][i]}*.65 ({table[i][i]*.85})')
-    #         if (table[i][j]) <= (table[i][i]*.2) :
-    #             # potential match for group 1
-    #             # print("     match found")
-    #             if i not in group2 and i not in group1:
-    #                 group2.append(i)
-    #                 # print(f'        added {i}')
-    #             if j not in group2 and j not in group1:
-    #                 group2.append(j)
 
 for i in range(0,50):
     if i in group2:
