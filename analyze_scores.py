@@ -13,6 +13,33 @@ def make_graph(table): # table is 50x50 aligned scores
 
     fig.show()
 
+def calculate_accuracy(group1, group2, group3):
+    
+    ansDF = pd.read_csv('answer_key.csv', usecols=[3])
+
+    right = 0
+    wrong = 0
+    for i in group1: #pop0
+        if ansDF['Population'][i] == 'pop0':
+            right += 1
+        else:
+            wrong += 1
+    print(f'right {right} wrong {wrong} total: {right+wrong}')
+
+    for i in group2: #pop1
+        if ansDF['Population'][i] == 'pop1':
+            right += 1
+        else:
+            wrong += 1
+    print(f'right {right} wrong {wrong} total: {right+wrong}')
+
+    for i in group3: #pop2
+        if ansDF['Population'][i] == 'pop2':
+            right += 1
+        else:
+            wrong += 1
+    print(f'right {right} wrong {wrong} total: {right+wrong}')
+    print(f'accuracy: {right/(right+wrong)}')
 
 f = pd.read_csv("datafile.csv",usecols=[1])
 
@@ -26,7 +53,7 @@ for i in range(0, len(f['Genome_Sequence'])):
             val = ga.align_seq(f['Genome_Sequence'][i], f['Genome_Sequence'][j])
             table[i][j] = val
 
-make_graph(table)
+# make_graph(table)
 
 
 # following code works with 76% accuracy ie identifies low mutation rate really well
@@ -73,33 +100,4 @@ for i in range(0, 50):
 
 print(group3, len(group3))
 
-
-ansDF = pd.read_csv('answer_key.csv', usecols=[3])
-
-pop0_counts = 0
-pop1_counts = 0
-pop2_counts = 0
-right = 0
-wrong = 0
-for i in group1: #pop0
-    if ansDF['Population'][i] == 'pop0':
-        right += 1
-    else:
-        wrong += 1
-print(f'right {right} wrong {wrong} total: {right+wrong}')
-
-for i in group2: #pop1
-    if ansDF['Population'][i] == 'pop1':
-        right += 1
-    else:
-        wrong += 1
-print(f'right {right} wrong {wrong} total: {right+wrong}')
-
-for i in group3: #pop2
-    if ansDF['Population'][i] == 'pop2':
-        right += 1
-    else:
-        wrong += 1
-print(f'right {right} wrong {wrong} total: {right+wrong}')
-print(f'accuracy: {right/(right+wrong)}')
-
+calculate_accuracy(group1, group2, group3)
