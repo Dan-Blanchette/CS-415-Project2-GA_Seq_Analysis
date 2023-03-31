@@ -1,0 +1,121 @@
+\documentclass[a4paper, 12pt, one column]{article}
+
+%% Language and font encodings. This says how to do hyphenation on end of lines.
+\usepackage[english]{babel}
+\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{float}
+\usepackage{listings}
+\usepackage{multicol}
+\usepackage{authblk}
+\usepackage{lipsum}
+\usepackage{titlesec}
+
+%% Sets page size and margins. You can edit this to your liking
+\usepackage[top=0cm, bottom=2.0cm, outer=2.5cm, inner=2.5cm, heightrounded,
+marginparwidth=1cm, marginparsep=1cm, margin=1.0cm]{geometry}
+
+%% Useful packages
+\usepackage{caption}
+\usepackage{graphicx} %allows you to use jpg or png images. PDF is still recommended
+\usepackage{amsmath}  % Math fonts
+\usepackage{amsfonts} %
+\usepackage{amssymb}  %
+\usepackage{multirow}
+
+\usepackage{xcolor}
+\usepackage[section]{placeins}
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+\graphicspath{{Images/}}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    %numbers=right,                    
+    %numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+
+\lstset{style=mystyle}
+
+
+\title{Project 2: Global Alignment Scoring for Population Identification}
+\author{Dan Blanchette, Taylor Martin, and Jordan Reed}
+\affil{CS415: Computational Biology, University of Idaho}
+
+\date{\today}
+\begin{document}
+\maketitle
+\begin{abstract}
+In the modern world, DNA sequencing has led to many important discoveries in stem cell research and forensic science. This type of research is difficult and time-consuming without a means to measure how related two DNA sequences are to one another. In this project, we use a genetic algorithm to generate individuals based on a high, low, and randomized method(high and low) for mutation. Each codon A, T, G, and C have individual scores comprising each individual's average fitness. The individuals are separated into a corresponding group from which they are generated. Afterward, they are sorted into one of three populations. Using a global alignment scoring algorithm, we strive to identify which individual belongs to a specific population. Our results indicate difficulties in correctly identifying an individual's group above 70\% certainty. This is due to the population generated using the random multiple mutation rate method. Due to this issue, the global alignment scores can be repeated even though an individual has a unique codon composition.
+\end{abstract}
+\begin{multicols}{2}
+
+\section{Introduction}
+\par For this project, we generated three populations based on genetic cross-over and at varying mutation rates. Population one was generated using a high mutation rate set to  80\%, Population two was set to 20\% mutation rate, and population three oscillates between the two. We chose to do this to add a degree of complexity to our global alignment scoring algorithm to identify which population selected individuals belonged. Our goal was to create a global alignment algorithm that would correctly identify which population an individual belongs to based on its alignment score and codon composition. 
+\section{Genetic Algorithm}
+%% code breakdown here with snippets
+\subsection{Individuals}
+
+Each individual comprises a genome sequence containing 50 nucleic acids, i.e. 'TCGA'. The genome sequence was chosen at random from the available nucleic acids.
+
+\subsection{Fitness Function}
+
+The fitness function is simple: it looks at a single character of the genome sequence at a time. If the character is a 'T,' one point is awarded. If the character is an 'A,' 2 points are awarded. If the character is a 'G,' 3 points are awarded, and 4 points are awarded to a 'C.' This means that the maximum fitness score for an individual, based on our genome size of 50, is 200.
+
+\subsection{Single Mutation Rate Algorithm}
+
+An individual is given a certain rate at which it can mutate. This rate is defined by the user and is described in more detail below. This mutation rate represents the chance an individual character from the genome sequence has to change into a different nucleic acid. The mutation function for an individual will walk down the genome sequence and pick a random number. If the random number is lower than the mutation rate, that position gets a new character (also chosen randomly). 
+It is important to note that when mutating, a character has a small chance of mutating into the same character.
+
+\subsection{Multiple Mutation Rate Algorithm}
+
+An individual can also mutate using multiple mutation rates. This algorithm is very similar to the Single Mutation Rate Algorithm above, with one key difference: There is a 25\% chance that the mutation rate will switch between the low rate and high rate (defined by the user). 
+
+\subsection{Populations}
+
+A population is comprised of 50 individuals, created at random.
+
+\subsection{Generational Model}
+
+A single generation of a population is loosely modeled after biological generations. Two of the best individuals are selected (selection process defined below) and undergo crossover (also defined below). The individuals are then mutated and placed into the new generation. This is repeated until we again reach a population size of 50. The goal is to allow the most desirable characteristics to be selected and passed on to the offspring.
+
+\subsection{Selection and Crossover}
+
+\section{Data Collected}
+
+\par We started with the same population comprised of 50 individuals, copied 3 times, and applied different mutation rates. The first population had a low mutation rate of 2\%. The second population had a very high mutation rate of 80\%. The third population had a mix of mutation rates. It would randomly oscillate between 5\% and 85\% with a 25\% chance of oscillation. 
+
+We ran the generational model for 20 generations, then randomly chose between each population to fill a fourth population. We stored these individuals in a file, and which populations they came from in a different file. 
+
+The population with the low mutation rate was comprised of individuals mostly made up of C's, as expected. We had found in the last assignment that a low mutation rate is optimal for obtaining the best fitness. As our fitness function prioritizes the character C over the rest, seeing individuals with mostly C's was expected. The average fitness for this population was around 176.
+
+The second population was the high mutation rate population. This population had a much lower average fitness and was comprised of fairly random characters in the genome sequence. The average fitness of this population was about 129. 
+
+The third population was a mix of the previous two populations, as expected. It's average fitness was slightly better (sitting at about 133). This is because there were some points during the mutation process that it was allowed to mutate at a lower rate rather than at the higher rate for the entire time. 
+
+\section{Alignment Algorithm}
+
+We chose to use a global alignment algorithm and the BLOSUM50 scoring matrix. 
+
+\section{Results}
+\par
+%% figures and data go here
+\section{Discussion/Conclusion}
+
+\end{multicols}
+\end{document}
