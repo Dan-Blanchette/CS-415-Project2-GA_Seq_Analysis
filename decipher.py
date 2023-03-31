@@ -17,7 +17,10 @@ def decipher(df):
 
     for i in range(len(df)):
         for j in range(i+1, len(df)):
-            align_seq(df.iloc[i, 0], df.iloc[j, 0])
+            val = align_seq(df.iloc[i, 0], df.iloc[i, 0])
+            #write aligned 1 and aligned2 to csv file 
+            with open('aligned.csv', 'a') as f:
+                f.write("Seq1:" + df.iloc[i, 0] + "\n" + "Seq2:" + df.iloc[i, 0] + "\n" + "Score:" + str(val) + "\n\n")
             
 
 

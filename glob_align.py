@@ -92,11 +92,6 @@ def align_seq(seq1, seq2):
     # print(aligned1)
     # print(aligned2)
 
-    
-    #write aligned 1 and aligned2 to csv file 
-    with open('aligned.csv', 'a') as f:
-        f.write("Seq1:" + aligned1 + "\n" + "Seq2:" + aligned2 + "\n" + "Score:" + str(scoring_matrix[len(seq2)][len(seq1)]) + "\n\n")
-
     return scoring_matrix[len(seq2)][len(seq1)]
 
 # val = align_seq(seq1, seq2)
