@@ -12,7 +12,7 @@ def make_graph(table): # table is 50x50 aligned scores
     )
     fig.update_layout(showlegend=False)
         
-    # fig.show()
+    fig.show()
     fig.write_image("indiv_align_scores.png")
 
 def calculate_accuracy(group1, group2, group3):
@@ -75,10 +75,6 @@ def analyze_scores(table):
                     if j not in group1:
                         group1.append(j)
 
-    for i in range(0,50):
-        if i in group1:
-            for j in range(0,50):
-                table[i][j] = 0
     group1.sort()
     print(group1, len(group1))
     for i in range(0,50): # row
@@ -87,15 +83,11 @@ def analyze_scores(table):
             if val < table[i][i]*.35 and i not in group2:
                 group2.append(i)
 
-    for i in range(0,50):
-        if i in group2:
-            for j in range(0,50):
-                table[i][j] = 0
     group2.sort()
     print(group2, len(group2))
 
     for i in range(0, 50):
-        if table[i][0] != 0 and table[i][1] != 0:
+        if i not in group1 and i not in group2:
             group3.append(i)
 
     print(group3, len(group3))
