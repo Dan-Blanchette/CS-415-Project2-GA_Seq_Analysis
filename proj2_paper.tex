@@ -13,7 +13,7 @@
 
 %% Sets page size and margins. You can edit this to your liking
 \usepackage[top=0cm, bottom=2.0cm, outer=2.5cm, inner=2.5cm, heightrounded,
-marginparwidth=1cm, marginparsep=1cm, margin=1.0cm]{geometry}
+marginparwidth=1cm, marginparsep=1cm, margin=2.0cm]{geometry}
 
 %% Useful packages
 \usepackage{caption}
@@ -112,9 +112,141 @@ The third population was a mix of the previous two populations, as expected. It'
 
 We chose to use a global alignment algorithm and the BLOSUM50 scoring matrix. 
 
+\section{Decipher Algorithm}
+\par Once we had the data generated from our 3 different populations into our "datafile.csv", we were then able to start aligning and deciphering the individuals genomes. 
+
+
+\subsection{decipher()}
+
+\par We load the generated data from our "datafile.csv" into a pandas dataframe named "df". We then call the decipher function, passing in "df". Decipher will then loop through each of the elements in "df", and call align\_seq() on every sequence. Once the sequences have been aligned, the results are written to "aligned.csv".   
+
+\begin{lstlisting}[language = python]
+def decipher(df):
+    """Decipher the data."""
+    
+    #delete file if it exists
+    if os.path.exists('aligned.csv'):
+        os.remove('aligned.csv')
+
+    for i in range(len(df)):
+        for j in range(i+1, len(df)):
+            val = align_seq(df.iloc[i, 0], df.iloc[i, 0])
+            #write aligned 1 and aligned2 to csv file 
+            with open('aligned.csv', 'a') as f:
+                f.write("Seq1:" + df.iloc[i, 0] + "\n" + "Seq2:" + df.iloc[i, 0] + "\n" + "Score:" + str(val) + "\n\n")
+\end{lstlisting}
+
+\section{Scoring Algorithm}
+
+\par After all the sequences within "datafile.csv" have been aligned and written to "aligned.csv", we can now start analyzing the fitness scores. Determining which population an individual originated from, and analyzing the accuracy of our scoring algorithm. 
+
+
+\subsection{analyze\_scores()}
+
+\begin{lstlisting}[language = python]
+def analyze_scores(table):
+    # following code works with 76% accuracy ie identifies low mutation rate really well
+
+    group1 = []
+    group2 = []
+    group3 = []
+
+    # percentage = .82
+    # top 35%
+    for i in range(0,50): # row
+        for j in range(0,50): # column
+            if i != j and table[i][j] != 0:
+                if (table[i][j]) >= (table[i][i]*.6) :
+                    if i not in group1:
+                        group1.append(i)
+                    if j not in group1:
+                        group1.append(j)
+
+    group1.sort()
+    print(group1, len(group1))
+    for i in range(0,50): # row
+        if i not in group1:
+            val = np.mean(table[i])
+            if val < table[i][i]*.35 and i not in group2:
+                group2.append(i)
+
+    group2.sort()
+    print(group2, len(group2))
+
+    for i in range(0, 50):
+        if i not in group1 and i not in group2:
+            group3.append(i)
+
+    print(group3, len(group3))
+
+    return group1, group2, group3
+\end{lstlisting}
+
+\subsection{calculate\_accuracy()}
+
+\begin{lstlisting}[language = python]
+def calculate_accuracy(group1, group2, group3):
+    
+    ansDF = pd.read_csv('answer_key.csv', usecols=[3])
+
+    right = 0
+    wrong = 0
+    for i in group1: #pop0
+        if ansDF['Population'][i] == 'pop0':
+            right += 1
+        else:
+            wrong += 1
+    print(f'right {right} wrong {wrong} total: {right+wrong}')
+
+    for i in group2: #pop1
+        if ansDF['Population'][i] == 'pop1':
+            right += 1
+        else:
+            wrong += 1
+    print(f'right {right} wrong {wrong} total: {right+wrong}')
+
+    for i in group3: #pop2
+        if ansDF['Population'][i] == 'pop2':
+            right += 1
+        else:
+            wrong += 1
+    print(f'right {right} wrong {wrong} total: {right+wrong}')
+    print(f'accuracy: {right/(right+wrong)}')
+\end{lstlisting}
+
+\subsection{make\_graph()}
+
+\begin{lstlisting}[language = python]
+def make_graph(table): # table is 50x50 aligned scores
+    fig = px.scatter(
+        x=np.arange(50),
+        y=table,
+        title="Individuals and Alignment Scores"
+    )
+    fig.update_layout(showlegend=False)
+        
+    fig.show()
+    fig.write_image("indiv_align_scores.png")
+\end{lstlisting}
+
 \section{Results}
-\par
-%% figures and data go here
+
+In doing the alignment algorithm, we found that our random population sample fell into some distinct groups (almost as expected). The first set of individuals that was the easiest to identify were the individuals from the lower mutation rate population. This is because these individuals had the optimal mutation rate to 'evolve' to the best genetic sequence according to the fitness function. This means they had a higher occurrence of 'C' characters. The way the global alignment algorithm works with the BLOSUM50 matrix assigned high scores the the individuals with more 'C's. These individuals also had scores that were closer together.
+
+You can see in the following image how there are some individuals whose scores are above 500. These are the individuals from the low mutation rate population. 
+
+% insert figure here
+
+The individuals from the other two populations were harder to tell apart. The higher mutation rate means that the genome sequence of the individuals were not able to 'evolve' to their best fitness score. They were mutating into random characters much more often. The population with a higher mutation rate had some pretty low fitness scores. 
+
+The population with a mixed rate of mutation had points of time where they were able to try and achieve the optimal genome sequence, but it was interrupted with times of high mutation. This translates to a higher average fitness than the high mutation rate population, but not by much. For this reason, these two groups were harder to tell apart. You can see the two populations and their alignment scores in the following figure.
+
+% insert figure here
+
+What we did is we took the average of the alignment scores, and if the average was below 35\% of the maximum for that individual, we placed that individual in the high mutation rate group. Every other individual that wasn't accounted for then went into the mixed rate group. It is important to note that this method only found 3 individuals for the high mutation rate group. This suggests a method that could be improved on.
+
+We were able to identify the individuals with an 80\% accuracy rate. All of our population 0 and 1 guesses were correct, but our population 2 guesses were right about 60\% of the time. 
+
 \section{Discussion/Conclusion}
 
 \end{multicols}
